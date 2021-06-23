@@ -66,7 +66,6 @@ class StudentManager(object):
         else:
             print(f'未找到该学员：{name},请核对后重新输入！')
 
-
     def save_student(self):
         student_f = open("student-info.data", 'w')
         new_list = [i.__dict__ for i in self.student_list]
