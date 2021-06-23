@@ -1,103 +1,79 @@
-from student import *
-import os
 
+"""
+  需求分析：
+    学员信息的增、删、改、查（单个、全量）、存、加载
+"""
+from student import *
+# import os
 
 class StudentManager(object):
-    def __init__(self):
-        self.student_list = []
 
+    student_list = []
     def run(self):
+        # 加载学员信息
         self.load_student()
+        # 选择功能
         while True:
-            self.show_menu()
-            func_index = input('请输入功能序号：')
-            if func_index == 1:
+            # 展示功能
+            self.show_func()
+            func = int(input('请输入功能序号：'))
+            if func == 1:
                 self.add_student()
-                break
-            elif func_index == 2:
-                self.delete_student()
-                break
-            elif func_index == 3:
+            elif func == 2:
                 self.modify_student()
-                break
-            elif func_index == 4:
-                self.query_student()
-                break
-            elif func_index == 5:
-                self.show_all_student()
-                break
-            elif func_index == 6:
+            elif func == 5:
+                self.show_student_info('查询所有学员信息')
+            elif func == 6:
                 self.save_student()
-                break
-            elif func_index == 7:
-                self.exit_system()
+            if func == 7:
                 break
 
-    @staticmethod
-    def show_menu():
-        print('请选择如下功能：')
-        print('1.添加学员：')
-        print('2.删除学员：')
-        print('3.修改学员信息：')
-        print('4.查询学员信息：')
-        print('5.显示所有学员信息：')
-        print('6.保存学员信息：')
-        print('7.退出系统：')
+    def load_student(self):
+        student_f = open('student-info.data', 'r')
+        student_list_str = student_f.read()
+        student_load = eval(student_list_str)
+        self.student_list = [Student(i['name'], i['gender'], i['tel']) for i in student_load]
+        self.show_student_info('加载学员信息')
+
+    def show_func(self):
+        print('1新增学员')
+        print('2修改学员')
+        print('3删除学员')
+        print('4查询学员')
+        print('5查询所有学员')
+        print('6保存学员')
+        print('7退出系统')
 
     def add_student(self):
-        # 采集学员信息
-        name = input('请输入您的姓名：')
-        gender = input('请输入您的性别：')
-        tel = input('请输入您的手机号：')
-        # 创建学员对象
+        name = input('请输入姓名：')
+        gender = input('请输入性别：')
+        tel = input('请输入手机号：')
         student = Student(name, gender, tel)
-        # 将学员对象添加到学员列表
         self.student_list.append(student)
-        print(self.student_list)
-        # 保存用户信息
-        self.save_student()
-
-    def delete_student(self):
-        del_name = input('请输入要删除的学员姓名：')
-        for s in self.student_list:
-            if s.name == del_name:
-                self.student_list.remove(s)
-                print(f"已移除 学员：{s}")
-                # 保存用户信息
-                self.save_student()
-                break
-        else:
-            print("查无此学员！")
+        self.show_student_info('新增学员')
 
     def modify_student(self):
-        modify_name = input('请输入要修改的学员姓名：')
-        for s in self.student_list:
-            if s.name == modify_name:
-                tel = input('请输入要修改的学员手机号：')
-                s.tel = tel
-                print(f"已修改 学员：{s}")
-                # 保存用户信息
-                self.save_student()
+        name = input('请输入需要修改的姓名：')
+        for i in self.student_list:
+            if i.name == name:
+                old_student = Student(i.name, i.gender, i.tel)
+                gender = input('请输入性别：')
+                tel = input('请输入手机号：')
+                i.gender = gender
+                i.tel = tel
+                print(f'已成功将【学员信息】:[{old_student}] 修改为：[{i}]')
                 break
         else:
-            print("查无此学员！")
+            print(f'未找到该学员：{name},请核对后重新输入！')
 
-    def query_student(self):
-        query_name = input('请输入要查询的学员姓名：')
-        for s in self.student_list:
-            if s.name == query_name:
-                print(f"已查询到 学员：{s}")
-                break
-        else:
-            print("查无此学员！")
-
-    def show_all_student(self):
-        print(f'所有学员信息{self.student_list}')
 
     def save_student(self):
-        f_student = os.open('student.txt', 'wb')
-        f_student.write(self.student_list)
-        f_student.close()
+        student_f = open("student-info.data", 'w')
+        new_list = [i.__dict__ for i in self.student_list]
+        student_f.write(str(new_list))
+        student_f.close()
+        print('保存了学员信息。')
 
-    def exit_system(self):
-        return
+    def show_student_info(self, func_name):
+        student_str = [i.__dict__ for i in self.student_list]
+        print(f'{func_name} : {student_str}')
