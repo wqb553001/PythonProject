@@ -1,0 +1,1 @@
+# students = [{'name': 'zhangsan', 'age': 18, 'sex': '女'},#             {'name': 'lisi', 'age': 18, 'sex': '男'},#             {'name': 'wangwu', 'age': 19, 'sex': '男'},#             {'name': 'zhaoliu', 'age': 16, 'sex': '女'}]## students.sort(key=lambda student: student['name'], reverse=True)## print(students)f = open('wqb.txt', 'w')f.write('666')f.close()
